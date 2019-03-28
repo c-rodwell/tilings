@@ -1,5 +1,5 @@
-import java.awt.*;
-import java.awt.geom.Point2D;
+package core;
+
 import java.util.ArrayList;
 
 public class abstractPolygon {
@@ -9,7 +9,8 @@ public class abstractPolygon {
 //    private ArrayList<Double> xpoints;
 //    private ArrayList<Double> ypoints;
     private ArrayList<abstractPoint> points;
-    //private ArrayList<Edge> edges;
+    protected abstractPoint center;
+    //private ArrayList<core.Edge> edges;
 
 
     public abstractPolygon(){
@@ -17,11 +18,24 @@ public class abstractPolygon {
 //        xpoints = new ArrayList<>();
 //        ypoints = new ArrayList<>();
         points = new ArrayList<>();
+        center = null;
+    }
+
+    public abstractPolygon(ArrayList<abstractPoint> points, abstractPoint center){
+        this.points = points;
+        this.center = center;
+        this.npoints = points.size();
+    }
+
+    public abstractPolygon(ArrayList<abstractPoint> points){
+        this.points = points;
+        this.center = abstractPoint.averagePoint(points);
+        this.npoints = points.size();
     }
 
     @Override
     public String toString() {
-        String outString = "abstractPolygon: npoints = "+npoints+", points = ";
+        String outString = "core.abstractPolygon: npoints = "+npoints+", center = "+center+", points = ";
         for(int i=0; i<npoints; i++){
             outString += "<"+ getPoint(i)+">";
         }
@@ -42,7 +56,11 @@ public class abstractPolygon {
         return points.get(i);
     }
 
-//    public void addPoint(double x, double y){
+    public abstractPoint getCenter() {
+        return center;
+    }
+
+    //    public void addPoint(double x, double y){
 //        npoints += 1;
 //        xpoints.add(x);
 //        ypoints.add(y);
@@ -66,6 +84,8 @@ public class abstractPolygon {
 
     public static abstractPolygon regPolyOnCircle(int degree, double radius, double center_x, double center_y, double rotation){
         abstractPolygon p = new abstractPolygon();
+        //p.npoints = degree;
+        p.center = new abstractPoint(center_x, center_y);
         //point on a circle: x = r*cos(theta) , y = r*sin(theta)
         for (int i=0; i<degree; i++){
             double theta = (2*Math.PI *((float)i / (float)degree)) + rotation;
@@ -78,55 +98,6 @@ public class abstractPolygon {
         return p;
     }
 
-    //build a regular polygon from 2 of its points
-//    //TODO - should this take an Edge object instead of 2 points?
-//    public static abstractPolygon regPolyOnEdge(int degree, abstractPoint p1, abstractPoint p2){
-//        System.out.println("regPolyOnEdge: degree = "+degree+", p1 = "+p1+", p2 = "+p2);
-//        abstractPolygon p = new abstractPolygon();
-//        p.addPoint(p1);
-//        p.addPoint(p2);
-//
-//        double side = abstractPoint.distance(p1, p2);
-//        double inside_angle = Math.PI * (1.0 - (2.0 / degree));
-//        System.out.println("side length = "+side);
-//        System.out.println("inside_angle = "+inside_angle);
-//
-//        abstractPoint thisPoint = p2;
-//        abstractPoint prevPoint = p1;
-//
-//        for (int i=3; i<= degree; i++){
-//
-//            System.out.println("\ncomputing point "+i);
-//            System.out.println("prevPoint = "+prevPoint+", thisPoint = "+thisPoint);
-//            double theta_cos = Math.acos((prevPoint.x - thisPoint.x) / side);
-//            double theta_sin = Math.asin((prevPoint.y - thisPoint.y) / side); //I think these should be the same
-//            double theta_tan = Math.atan((prevPoint.y - thisPoint.y)/(prevPoint.x - thisPoint.x));
-//
-//            System.out.println("angle by cosine: "+theta_cos+", angle by sine: "+theta_sin);
-//
-//            double x = thisPoint.x + side*Math.cos(inside_angle+theta_tan);
-//            double y = thisPoint.y + side*Math.sin(inside_angle+theta_tan);
-//
-//            prevPoint = thisPoint;
-//            thisPoint = new abstractPoint(x,y);
-//            p.addPoint(thisPoint);
-//            System.out.println("new point: "+thisPoint);
-//        }
-//
-//
-//        //point on a circle: x = r*cos(theta) , y = r*sin(theta)
-////        for (int i=0; i<degree; i++){
-////            double theta = (2*Math.PI *((float)i / (float)degree)) + rotation;
-////            //System.out.println("theta = "+theta);
-////            double x = ( radius * Math.cos(theta) ) + center_x;
-////            double y = ( radius * Math.sin(theta) ) + center_y;
-////            p.addPoint( x, y);
-////            //System.out.println("adding point: "+x+", "+y);
-////        }
-//
-//        return p;
-//    }
-
     //try it using a different method
     public static abstractPolygon regPolyOnEdge(int degree, Edge edge, boolean chooseFirst){
         abstractPolygon aP = new abstractPolygon();
@@ -138,8 +109,8 @@ public class abstractPolygon {
         } else{
             center = possible_centers[1];
         }
-        double radius = edge.length / (2*Math.sin(center_angle/2.0));
-        double rotation = edge.end1.differenceFrom(center).toAngle();
+        double radius = edge.edgeLength / (2*Math.sin(center_angle/2.0));
+        double rotation = edge.getEnd1().differenceFrom(center).toAngle();
         return regPolyOnCircle(degree, radius, center.x, center.y, rotation );
     }
 
