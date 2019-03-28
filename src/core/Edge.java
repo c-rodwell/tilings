@@ -15,6 +15,11 @@ public class Edge {
         edgeLength = abstractPoint.distance(end1, end2);
     }
 
+    @Override
+    public String toString() {
+        return "Edge:\n\tside1 = "+side1+"\n\tside2 = "+side2+"\n\tend1 = "+end1+"\n\tend2 = "+end2;
+    }
+
     public abstractPoint getEnd1() {
         return end1;
     }
@@ -25,6 +30,12 @@ public class Edge {
 
     public abstractPoint midPoint(){
         return new abstractPoint((end1.x + end2.x)/2.0 , (end1.y + end2.y)/2.0);
+    }
+
+    //point at uneven distance along the edge. larger prop1 makes it closer to end1
+    public abstractPoint pointAtProportion(double prop1, double prop2){
+        return new abstractPoint((end1.x*prop1 + end2.x*prop2)/(prop1+prop2),
+                                (end1.y*prop1 + end2.y*prop2)/(prop1+prop2));
     }
 
     //vector between the ends
@@ -54,11 +65,11 @@ public class Edge {
 
     //return the two points on the perpendicular bisector of the edge,
     //where distance from each of the returned points to each of the endpoints is sidelength
-//    public core.abstractPoint[] bisectingPointsAtLength(double sidelength){
+//    public abstractPoint[] bisectingPointsAtLength(double sidelength){
 //        if (sidelength < length / 2){
 //            throw new IllegalArgumentException("sidelength arg must be at least half of edge.length");
 //        }
-//        core.abstractPoint[] points = new core.abstractPoint[2];
+//        abstractPoint[] points = new abstractPoint[2];
 //        return points;
 //    }
 

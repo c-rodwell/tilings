@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import core.*;
+import golden_triangles.Golden221;
 
 //using graphics2d setup from https://www.javaworld.com/article/2076715/getting-started-with-java-2d.html
 
@@ -98,34 +99,48 @@ public class Playground extends JFrame { //example had a Frame - is JFrame ok?
 //            drawFace(edgeFace, g2d, Color.cyan, true);
 //        }
 
-        quartering_Square bigSquare = new quartering_Square(100, 600, 300, Math.PI/4);
-        bigSquare.makeEdges();
-        System.out.println("bigSquare: "+bigSquare);
-        drawFace(bigSquare, g2d, Color.black, false);
-        bigSquare.split_inside();
-        Random r = new Random();
-        for (Face smallSquare : bigSquare.getComponentFaces()){
-            Color color = Color.getHSBColor(r.nextFloat(), r.nextFloat(), r.nextFloat());
-            drawFace(smallSquare, g2d, color, true);
-        }
+//        quartering_Square bigSquare = new quartering_Square(100, 600, 300, Math.PI/4);
+//        bigSquare.makeEdges();
+//        System.out.println("bigSquare: "+bigSquare);
+//        drawFace(bigSquare, g2d, Color.black, false);
+//        bigSquare.split_inside();
+//        Random r = new Random();
+//        for (Face smallSquare : bigSquare.getComponentFaces()){
+//            Color color = Color.getHSBColor(r.nextFloat(), r.nextFloat(), r.nextFloat());
+//            drawFace(smallSquare, g2d, color, true);
+//        }
 
-        quartering_Square bigSquare2 = new quartering_Square(100, 300, 600, Math.PI/7);
-        drawFace(bigSquare2, g2d, Color.black, false);
-        ArrayList<Face> fragments = split_iterate(bigSquare2, 3);
-        Random r2 = new Random();
-        for (Face face: fragments){
-            Color color = Color.getHSBColor(r2.nextFloat(), r2.nextFloat(), r2.nextFloat());
+//        quartering_Square bigSquare2 = new quartering_Square(100, 300, 600, Math.PI/7);
+//        drawFace(bigSquare2, g2d, Color.black, false);
+//        ArrayList<Face> fragments = split_iterate(bigSquare2, 3);
+//        Random r2 = new Random();
+//        for (Face face: fragments){
+//            Color color = Color.getHSBColor(r2.nextFloat(), r2.nextFloat(), r2.nextFloat());
+//            drawFace(face, g2d, color, true);
+//        }
+
+//        quarteringTriangle bigTri = new quarteringTriangle(100, 400, 200, Math.PI/6);
+//        drawFace(bigTri, g2d, Color.black, false);
+//        ArrayList<Face> smallTris = split_iterate(bigTri, 2);
+//        Random r3 = new Random();
+//        for (Face face: smallTris){
+//            Color color = Color.getHSBColor(r3.nextFloat(), r3.nextFloat(), r3.nextFloat());
+//            drawFace(face, g2d, color, true);
+//        }
+
+        Edge triangleBase = new Edge(null, null, new abstractPoint(200, 700), new abstractPoint(700, 700));
+        Golden221 bigGoldenTri = Golden221.fromBase(triangleBase, true);
+
+        ArrayList<Face> split_goldens = split_iterate(bigGoldenTri, 5);
+        Random r4 = new Random();
+        for (Face face: split_goldens){
+            System.out.println(face);
+            Color color = Color.getHSBColor(r4.nextFloat(), r4.nextFloat(), r4.nextFloat());
             drawFace(face, g2d, color, true);
         }
-
-        quarteringTriangle bigTri = new quarteringTriangle(100, 400, 200, Math.PI/6);
-        drawFace(bigTri, g2d, Color.black, false);
-        ArrayList<Face> smallTris = split_iterate(bigTri, 2);
-        Random r3 = new Random();
-        for (Face face: smallTris){
-            Color color = Color.getHSBColor(r3.nextFloat(), r3.nextFloat(), r3.nextFloat());
-            drawFace(face, g2d, color, true);
-        }
+        drawPoint(bigGoldenTri.getPoint(0), g2d, 4, Color.red);
+        drawPoint(bigGoldenTri.getPoint(1), g2d, 4, Color.red);
+        drawPoint(bigGoldenTri.getPoint(2), g2d, 4, Color.red);
     }
 
     //translate a core.Face into a Polygon and draw it
@@ -195,13 +210,14 @@ public class Playground extends JFrame { //example had a Frame - is JFrame ok?
             //or could remove from max index for depth-first - don't really care now
             Face nextFace = current_faces.remove(0);
             int depth = nextFace.getDepth();
+            System.out.println("pop node with depth = "+depth);
             if (depth >= maxDepth){
                 final_faces.add(nextFace);
             } else {
                 nextFace.makeEdges();
                 nextFace.split_inside();
                 for (Face newFace : nextFace.getComponentFaces()){
-                    newFace.setDepth(depth+1);
+                    //newFace.setDepth(depth+1);
                     current_faces.add(newFace);
                 }
             }

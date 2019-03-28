@@ -10,7 +10,7 @@ public class abstractPolygon {
 //    private ArrayList<Double> ypoints;
     private ArrayList<abstractPoint> points;
     protected abstractPoint center;
-    //private ArrayList<core.Edge> edges;
+    //private ArrayList<Edge> edges;
 
 
     public abstractPolygon(){
@@ -35,7 +35,7 @@ public class abstractPolygon {
 
     @Override
     public String toString() {
-        String outString = "core.abstractPolygon: npoints = "+npoints+", center = "+center+", points = ";
+        String outString = "abstractPolygon: npoints = "+npoints+", center = "+center+", points = ";
         for(int i=0; i<npoints; i++){
             outString += "<"+ getPoint(i)+">";
         }

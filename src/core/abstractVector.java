@@ -1,7 +1,7 @@
 package core;
 
 //class for a vector in abstract mathematical 2D space, using double values
-//it looks a lot like core.abstractPoint, but conceptually different
+//it looks a lot like abstractPoint, but conceptually different
 public class abstractVector {
     double dx;
     double dy;

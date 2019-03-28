@@ -2,23 +2,23 @@ package core;
 
 import java.util.ArrayList;
 
-//wrapper around core.abstractPolygon which has the division behavior
+//wrapper around abstractPolygon which has the division behavior
 public class Face {
     protected abstractPolygon polygon;
     protected ArrayList<Edge> edges;
-    //ArrayList<core.Face> neighbors; do we want list of neighbors, or just reference through edges?
+    //ArrayList<Face> neighbors; do we want list of neighbors, or just reference through edges?
     protected ArrayList<Face> component_faces;
     protected ArrayList<Edge> component_edges;
     protected int depth;
 
     //default constructor  so subclass constructors don't complain
     public Face(){
-        System.out.println("core.Face constructor with no params");
+        //System.out.println("Face constructor with no params");
     }
 
 
     public Face(abstractPolygon polygon){
-        System.out.println("core.Face constructor with polygon = "+polygon);
+        //System.out.println("Face constructor with polygon = "+polygon);
         //this.polygon = polygon;
         setPolygon(polygon);
         edges = new ArrayList<>();
@@ -50,11 +50,11 @@ public class Face {
 
     @Override
     public String toString() {
-        return "core.Face: polygon = "+polygon;
+        return "Face: polygon = "+polygon;
     }
 
     public static Face regularPolygonFace(int degree, double radius, double center_x, double center_y, double rotation){
-        //core.abstractPolygon.regularPolygon(degree, radius, center_x, center_y, rotation);
+        //abstractPolygon.regularPolygon(degree, radius, center_x, center_y, rotation);
         return new Face(abstractPolygon.regPolyOnCircle(degree, radius, center_x, center_y, rotation));
     }
 
@@ -76,8 +76,8 @@ public class Face {
         for (int i = 0; i<npoints; i ++){
             abstractPoint point1 = getPoint(i);
             abstractPoint point2 = getPoint((i+1) % npoints);
-            //core.Face neighbor = neighbors.get(i);
-            //core.Edge edge = new core.Edge(this, neighbor, point1, point2);
+            //Face neighbor = neighbors.get(i);
+            //Edge edge = new Edge(this, neighbor, point1, point2);
             Edge edge = new Edge(this, null, point1, point2);
             edges.add(edge);
         }
