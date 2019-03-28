@@ -56,6 +56,11 @@ public class quarteringTriangle extends Face {
         quarteringTriangle tri_center = new quarteringTriangle(new abstractPolygon(new ArrayList<abstractPoint>(
                 Arrays.asList(mid1, mid2, mid3))));
 
+        tri_1.setDepth(depth+1);
+        tri_2.setDepth(depth+1);
+        tri_3.setDepth(depth+1);
+        tri_center.setDepth(depth+1);
+
         component_faces.add(tri_1);
         component_faces.add(tri_2);
         component_faces.add(tri_3);

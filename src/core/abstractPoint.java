@@ -51,5 +51,11 @@ public class abstractPoint {
         return new abstractPoint(sum_x / numPoints, sum_y / numPoints);
     }
 
+    public static abstractPoint weightedAvg(abstractPoint p1, abstractPoint p2, double w1, double w2){
+        double x = (w1*p1.getX() + w2*p2.getX())/(w1+w2);
+        double y = (w1*p1.getY() + w2*p2.getY())/(w1+w2);
+        return new abstractPoint(x, y);
+    }
+
 
 }

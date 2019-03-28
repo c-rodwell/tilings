@@ -64,6 +64,11 @@ public class quartering_Square extends Face {
         quartering_Square square4 = new quartering_Square(new abstractPolygon(new ArrayList<abstractPoint>(
                 Arrays.asList(center, mid3, corner4, mid4))));
 
+        square1.setDepth(depth+1);
+        square2.setDepth(depth+1);
+        square3.setDepth(depth+1);
+        square4.setDepth(depth+1);
+
         component_faces.add(square1);
         component_faces.add(square2);
         component_faces.add(square3);

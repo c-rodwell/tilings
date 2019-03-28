@@ -19,7 +19,7 @@ public class Playground extends JFrame { //example had a Frame - is JFrame ok?
     double phi = (1.0 + Math.sqrt(5.0))/2.0;
 
     public static void main(String[] args){
-        new Playground(0, 0, 2, 500, 500);
+        new Playground(400, 400, 0.2, 500, 500);
     }
 
     public Playground(double x_offset, double y_offset, double scale, int width, int height){
@@ -120,23 +120,22 @@ public class Playground extends JFrame { //example had a Frame - is JFrame ok?
 //        }
 
 //        quarteringTriangle bigTri = new quarteringTriangle(100, 400, 200, Math.PI/6);
-//        drawFace(bigTri, g2d, Color.black, false);
-//        ArrayList<Face> smallTris = split_iterate(bigTri, 2);
+//        //drawFace(bigTri, g2d, Color.black, false);
+//        ArrayList<Face> smallTris = split_iterate(bigTri, 4);
 //        Random r3 = new Random();
 //        for (Face face: smallTris){
 //            Color color = Color.getHSBColor(r3.nextFloat(), r3.nextFloat(), r3.nextFloat());
 //            drawFace(face, g2d, color, true);
 //        }
 
-        Edge triangleBase = new Edge(null, null, new abstractPoint(200, 700), new abstractPoint(700, 700));
-        Golden221 bigGoldenTri = Golden221.fromBase(triangleBase, true);
-
-        ArrayList<Face> split_goldens = split_iterate(bigGoldenTri, 5);
-        Random r4 = new Random();
+        Edge triangleBase = new Edge(null, null, new abstractPoint(200, 900), new abstractPoint(700, 900));
+        Golden221 bigGoldenTri = Golden221.fromBase(triangleBase, false);
+        ArrayList<Face> split_goldens = split_iterate(bigGoldenTri, 20);
         for (Face face: split_goldens){
             System.out.println(face);
-            Color color = Color.getHSBColor(r4.nextFloat(), r4.nextFloat(), r4.nextFloat());
+            Color color = face.getClass() == Golden221.class ? Color.blue : Color.darkGray;
             drawFace(face, g2d, color, true);
+            drawFace(face, g2d, Color.black, false);
         }
         drawPoint(bigGoldenTri.getPoint(0), g2d, 4, Color.red);
         drawPoint(bigGoldenTri.getPoint(1), g2d, 4, Color.red);
@@ -210,14 +209,14 @@ public class Playground extends JFrame { //example had a Frame - is JFrame ok?
             //or could remove from max index for depth-first - don't really care now
             Face nextFace = current_faces.remove(0);
             int depth = nextFace.getDepth();
-            System.out.println("pop node with depth = "+depth);
+            //System.out.println("pop node with depth = "+depth);
             if (depth >= maxDepth){
                 final_faces.add(nextFace);
             } else {
                 nextFace.makeEdges();
                 nextFace.split_inside();
                 for (Face newFace : nextFace.getComponentFaces()){
-                    //newFace.setDepth(depth+1);
+                    //newFace.setDepth(depth+1); //without this line, split_inside needs to set depth.
                     current_faces.add(newFace);
                 }
             }
