@@ -73,14 +73,14 @@ public class Edge {
 //        return points;
 //    }
 
-    public Face rhombusOnEdge(double angle) {
+    public abstractPolygon rhombusOnEdge(double angle) {
         abstractPoint[] corners = bisectingPointsAtAngle(angle);
         abstractPolygon edgePiece = new abstractPolygon();
         edgePiece.addPoint(end1);
         edgePiece.addPoint(corners[0]);
         edgePiece.addPoint(end2);
         edgePiece.addPoint(corners[1]);
-        return new Face(edgePiece);
+        return edgePiece;
     }
 
     //split into pieces - these can be points, edges, faces

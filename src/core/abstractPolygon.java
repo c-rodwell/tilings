@@ -1,6 +1,7 @@
 package core;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class abstractPolygon {
     //Polygon in an abstract, mathematical coordinate system, not tied to pixel coordinates
@@ -57,6 +58,9 @@ public class abstractPolygon {
     }
 
     public abstractPoint getCenter() {
+        if (center == null){
+            center = abstractPoint.averagePoint(points);
+        }
         return center;
     }
 
@@ -110,8 +114,66 @@ public class abstractPolygon {
             center = possible_centers[1];
         }
         double radius = edge.edgeLength / (2*Math.sin(center_angle/2.0));
-        double rotation = edge.getEnd1().differenceFrom(center).toAngle();
+        double rotation = edge.getEnd1().differenceFrom(center).angle();
         return regPolyOnCircle(degree, radius, center.x, center.y, rotation );
+    }
+
+    //isoceles triangle from the two base points and the opposite angle
+    //will make clockwise point order [p1, p2, p3] if (p1, p2) is the base
+
+//    public abstractPoint[] bisectingPointsAtAngle(double angle){
+//
+//        abstractPoint midPoint = midPoint();
+//        double perpDistance = edgeLength / (2*Math.tan(angle / 2.0));
+//        abstractVector normalVector = unitNormalVector();
+//        abstractPoint perp1 = midPoint.add(normalVector.scale(-perpDistance));
+//        abstractPoint perp2 = midPoint.add(normalVector.scale(perpDistance));
+//        abstractPoint[] points = {perp1, perp2};
+//        return points;
+//    }
+
+    //this has a lot of overlap with rhombusOnOppositePoints -
+    public static abstractPolygon isocelesOnBase(abstractPoint p0, abstractPoint p1, double topangle){
+        abstractPoint midPoint = abstractPoint.weightedAvg(p0, p1, 1, 1);
+        double perpDistance = abstractPoint.distance(p0, p1) / (2*Math.tan(topangle / 2.0));
+        abstractVector normalVector = p1.differenceFrom(p0).normalVector();
+        abstractPoint p2 = midPoint.add(normalVector.scale(-perpDistance));
+
+        ArrayList<abstractPoint> points = new ArrayList(Arrays.asList(p0, p1, p2));
+        return new abstractPolygon(points);
+    }
+
+    //rhombus from the two opposite points and
+    public static abstractPolygon rhombusOnOppositePoints(abstractPoint p0, abstractPoint p2, double otherangle){
+        abstractPoint midPoint = abstractPoint.weightedAvg(p0, p2, 1, 1);
+        double perpDistance = abstractPoint.distance(p0, p2) / (2*Math.tan(otherangle / 2.0));
+        abstractVector normalVector = p2.differenceFrom(p0).normalVector();
+        abstractPoint p1 = midPoint.add(normalVector.scale(-perpDistance));
+        abstractPoint p3 = midPoint.add(normalVector.scale(perpDistance));
+
+        ArrayList<abstractPoint> points = new ArrayList(Arrays.asList(p0, p1, p2, p3));
+        return new abstractPolygon(points);
+    }
+
+    //rhombus from two adjacent points p0 and p1. theta is the angle at p0
+    public static abstractPolygon rhombusOnAdjacentPoints(abstractPoint p0, abstractPoint p1, double theta){
+        abstractVector v1 = p1.differenceFrom(p0);
+        abstractVector v2 = v1.rotate(theta);
+        abstractPoint p3 = p0.add(v2);
+        abstractPoint p2 = p1.add(v2);
+
+        ArrayList<abstractPoint> points = new ArrayList(Arrays.asList(p0, p1, p2, p3));
+        return new abstractPolygon(points);
+    }
+
+    //parallelogram which has the 3 points as corners
+    public static abstractPolygon parallelogramFromThreePoints(abstractPoint p0, abstractPoint p1, abstractPoint p3){
+        abstractVector v1 = p1.differenceFrom(p0);
+        //abstractVector v2 = p3.differenceFrom(p0);
+        abstractPoint p2 = p3.add(v1); //or p1.add(v2)
+
+        ArrayList<abstractPoint> points = new ArrayList(Arrays.asList(p0, p1, p2, p3));
+        return new abstractPolygon(points);
     }
 
 }

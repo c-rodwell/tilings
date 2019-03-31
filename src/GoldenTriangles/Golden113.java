@@ -1,4 +1,4 @@
-package golden_triangles;
+package GoldenTriangles;
 import core.*;
 
 public class Golden113 extends Face {

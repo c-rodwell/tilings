@@ -5,8 +5,10 @@ import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.Random;
 
+import SquareAndRhombus.*;
 import core.*;
-import golden_triangles.Golden221;
+import GoldenTriangles.Golden221;
+
 
 //using graphics2d setup from https://www.javaworld.com/article/2076715/getting-started-with-java-2d.html
 
@@ -14,15 +16,16 @@ public class Playground extends JFrame { //example had a Frame - is JFrame ok?
 
     double x_offset;
     double y_offset;
-    double scale;
+    double scale_x;
+    double scale_y;
 
     double phi = (1.0 + Math.sqrt(5.0))/2.0;
 
     public static void main(String[] args){
-        new Playground(400, 400, 0.2, 500, 500);
+        new Playground(250, 150, -0.5, 0.5, 500, 500);
     }
 
-    public Playground(double x_offset, double y_offset, double scale, int width, int height){
+    public Playground(double x_offset, double y_offset, double scale_x, double scale_y, int width, int height){
         super("2D shape drawer");
         //dispose of resources on close
         addWindowListener(new WindowAdapter() {
@@ -35,7 +38,8 @@ public class Playground extends JFrame { //example had a Frame - is JFrame ok?
         setVisible(true);
         this.x_offset = x_offset;
         this.y_offset = y_offset;
-        this.scale = scale;
+        this.scale_x = scale_x;
+        this.scale_y = scale_y;
     }
 
     public void paint(Graphics g) {
@@ -70,7 +74,6 @@ public class Playground extends JFrame { //example had a Frame - is JFrame ok?
 //        drawEdge(partsOfEdge[0], g2d, Color.black);
 //        drawEdge(partsOfEdge[1], g2d, Color.blue);
 //        drawEdge(partsOfEdge[2], g2d, Color.red);
-
 
         //core.abstractPolygon polyOnEdge = core.abstractPolygon.regPolyOnEdge(6, new core.abstractPoint(100, 100), new core.abstractPoint(200, 100));
         //core.abstractPolygon polyOnEdge = core.abstractPolygon.regPolyOnEdge(5, edge1, true);
@@ -128,18 +131,137 @@ public class Playground extends JFrame { //example had a Frame - is JFrame ok?
 //            drawFace(face, g2d, color, true);
 //        }
 
-        Edge triangleBase = new Edge(null, null, new abstractPoint(200, 900), new abstractPoint(700, 900));
-        Golden221 bigGoldenTri = Golden221.fromBase(triangleBase, false);
-        ArrayList<Face> split_goldens = split_iterate(bigGoldenTri, 20);
-        for (Face face: split_goldens){
+//        Edge triangleBase = new Edge(null, null, new abstractPoint(-50, 550), new abstractPoint(450, 550));
+//        Golden221 bigGoldenTri = Golden221.fromBase(triangleBase, false);
+//        ArrayList<Face> split_goldens = split_iterate(bigGoldenTri, 12);
+//        for (Face face: split_goldens){
+//            System.out.println(face);
+//            Color color = face.getClass() == Golden221.class ? Color.blue : Color.darkGray;
+//            drawFace(face, g2d, color, true);
+//            drawFace(face, g2d, Color.black, false);
+//        }
+//        drawPoint(bigGoldenTri.getPoint(0), g2d, 4, Color.red);
+//        drawPoint(bigGoldenTri.getPoint(1), g2d, 4, Color.red);
+//        drawPoint(bigGoldenTri.getPoint(2), g2d, 4, Color.red);
+
+//        Square square = new Square(200, 100, 100, Math.PI/4);
+//        drawPoint(square.getcenter(), g2d, 4, Color.blue);
+//        ArrayList<Face> square_parts = split_iterate(square, 4);
+//        Random r4 = new Random();
+//        for (Face face: square_parts){
+//            System.out.println(face);
+//            drawFace(face, g2d, Color.black, false);
+//            if(face.getClass() == Rhombus.class){
+//                drawFace(face, g2d, Color.green, true);
+//                //drawPoint(face.getPoint(0), g2d, 4, Color.RED);
+//            } else {
+//                drawFace(face, g2d, Color.blue, true);
+//            }
+////            Color color = Color.getHSBColor(r4.nextFloat(), r4.nextFloat(), r4.nextFloat());
+////            drawFace(face, g2d, color, true);
+////            drawFace(face, g2d, Color.black, false);
+//            //drawPoint(face.getPoint(3), g2d, 4, Color.red);
+//        }
+
+        //Rhombus bigRhombus = Rhombus.fromShortDiag(new abstractPoint(50, 350), new abstractPoint(350, 350));
+        Rhombus bigRhombus = Rhombus.fromLongDiag(new abstractPoint(100, 650), new abstractPoint(100, 50));
+        //Rhombus bigRhombus = new Rhombus(abstractPolygon.rhombusOnOppositePoints(new abstractPoint(50, 350), new abstractPoint(350, 350), Math.PI/4));
+        //bigRhombus.makeEdges();
+
+        ArrayList<Face> rhombus_parts = split_iterate(bigRhombus, 3);
+        for (Face face: rhombus_parts){
             System.out.println(face);
-            Color color = face.getClass() == Golden221.class ? Color.blue : Color.darkGray;
-            drawFace(face, g2d, color, true);
             drawFace(face, g2d, Color.black, false);
+            if(face.getClass() == Rhombus.class){
+                drawFace(face, g2d, Color.green, true);
+                //drawPoint(face.getPoint(0), g2d, 4, Color.RED);
+            } else {
+                drawFace(face, g2d, Color.blue, true);
+            }
+//            Color color = Color.getHSBColor(r4.nextFloat(), r4.nextFloat(), r4.nextFloat());
+//            drawFace(face, g2d, color, true);
+//            drawFace(face, g2d, Color.black, false);
+            //drawPoint(face.getPoint(3), g2d, 4, Color.red);
         }
-        drawPoint(bigGoldenTri.getPoint(0), g2d, 4, Color.red);
-        drawPoint(bigGoldenTri.getPoint(1), g2d, 4, Color.red);
-        drawPoint(bigGoldenTri.getPoint(2), g2d, 4, Color.red);
+
+//        bigRhombus.split_all_edges();
+//        for (Face f: bigRhombus.getComponentFaces()){
+//            drawFace(f, g2d, Color.yellow, true);
+//        }
+//
+//        drawFace(bigRhombus, g2d, Color.black, false);
+
+//        abstractPoint point0 = bigRhombus.getPoint(0);
+//        abstractPoint point1 = bigRhombus.getPoint(1);
+//        abstractPoint point2 = bigRhombus.getPoint(2);
+//        abstractPoint point3 = bigRhombus.getPoint(3);
+//
+//        ArrayList<Edge> Edges = bigRhombus.getEdges();
+//        Edge edge1 = Edges.get(0);
+//        Edge edge2 = Edges.get(1);
+//        Edge edge3 = Edges.get(2);
+//        Edge edge4 = Edges.get(3);
+//
+//        drawPoint(point0, g2d, 10, Color.cyan);
+//        drawPoint(point1, g2d, 10, Color.magenta);
+//        drawPoint(point2, g2d, 10, Color.yellow);
+//        drawPoint(point3, g2d, 10, Color.black);
+//
+//        drawEdge(edge1, g2d, Color.red);
+//        drawEdge(edge2, g2d, Color.green);
+//        drawEdge(edge3, g2d, Color.blue);
+//
+//        abstractPoint mid12 = edge1.pointAtProportion(1.0, 1.0+Math.sqrt(2.0));
+//        abstractPoint mid11 = edge1.pointAtProportion(1.0+Math.sqrt(2.0), 1.0);
+//
+//        abstractPoint mid22 = edge2.pointAtProportion(1.0, 1.0+Math.sqrt(2.0));
+//        abstractPoint mid21 = edge2.pointAtProportion(1.0+Math.sqrt(2.0), 1.0);
+//
+//        abstractPoint mid32 = edge3.pointAtProportion(1.0, 1.0+Math.sqrt(2.0));
+//        abstractPoint mid31 = edge3.pointAtProportion(1.0+Math.sqrt(2.0), 1.0);
+//
+//        abstractPoint mid42 = edge4.pointAtProportion(1.0, 1.0+Math.sqrt(2.0));
+//        abstractPoint mid41 = edge4.pointAtProportion(1.0+Math.sqrt(2.0), 1.0);
+//
+//        drawString(mid11, g2d,"1,1", Color.black);
+//        drawString(mid12, g2d,"1,2", Color.black);
+//        drawString(mid21, g2d,"2,1", Color.black);
+//        drawString(mid22, g2d,"2,2", Color.black);
+//
+//        drawString(mid31, g2d,"3,1", Color.black);
+//        drawString(mid32, g2d,"3,2", Color.black);
+//        drawString(mid41, g2d,"4,1", Color.black);
+//        drawString(mid42, g2d,"4,2", Color.black);
+//
+//        Face crossRhombus = new Rhombus(abstractPolygon.rhombusOnOppositePoints(mid12, mid41, 3.0*Math.PI/4.0));
+//        drawFace(crossRhombus, g2d, Color.blue, true);
+//
+//        Face endRhombus0 = new Rhombus(abstractPolygon.parallelogramFromThreePoints(point0, mid11, mid42));
+//        drawFace(endRhombus0, g2d, Color.magenta, true);
+//
+//        Face endRhombus1 = new Rhombus(abstractPolygon.parallelogramFromThreePoints(point2, mid22, mid31));
+//        drawFace(endRhombus1, g2d, Color.black, true);
+//
+//        Face innerSquare1 = new Square(abstractPolygon.regPolyOnEdge(4, new Edge(null, null, mid12, point1), false));
+//        Face innerSquare3 = new Square(abstractPolygon.regPolyOnEdge(4, new Edge(null, null, point3, mid41), false));
+//        drawFace(innerSquare1, g2d, Color.red, true);
+//        drawFace(innerSquare3, g2d, Color.red, true);
+//
+//        abstractPoint octagonTop = endRhombus1.getPoint(2);
+//
+//        Face fanRhombusLeft = new Rhombus(abstractPolygon.rhombusOnOppositePoints(octagonTop, point3, 3.0*Math.PI/4.0));
+//        Face fanRhombusRight = new Rhombus(abstractPolygon.rhombusOnOppositePoints(octagonTop, point1, 3.0*Math.PI/4.0));
+//        Face fanRhombusCenter = new Rhombus(abstractPolygon.rhombusOnOppositePoints(octagonTop, crossRhombus.getPoint(1), 3.0*Math.PI/4.0));
+//
+//        drawFace(fanRhombusLeft, g2d, Color.blue, true);
+//        drawFace(fanRhombusCenter, g2d, Color.cyan, true);
+//        drawFace(fanRhombusRight, g2d, Color.green, true);
+    }
+
+    public void drawString(abstractPoint point, Graphics g, String S, Color color){
+        int[] new_coords = mapCoords(point);
+        g.setColor(color);
+        g.drawString(S, new_coords[0], new_coords[1]);
     }
 
     //translate a core.Face into a Polygon and draw it
@@ -180,14 +302,13 @@ public class Playground extends JFrame { //example had a Frame - is JFrame ok?
         g.drawLine(p1[0], p1[1], p2[0], p2[1]);
     }
 
-
     public void drawFace(Face f, Graphics g, Color color, boolean fill){
         drawFace(f.getPolygon(), g, color, fill);
     }
 
     public int[] mapCoords(abstractPoint point){
-        int new_x = (int) ((point.getX() - x_offset)/scale);
-        int new_y = (int) ((point.getY() - y_offset)/scale);
+        int new_x = (int) ((point.getX() - x_offset)/scale_x);
+        int new_y = (int) ((point.getY() - y_offset)/scale_y);
         int[] new_point = {new_x, new_y};
         return new_point;
     }
@@ -214,6 +335,7 @@ public class Playground extends JFrame { //example had a Frame - is JFrame ok?
                 final_faces.add(nextFace);
             } else {
                 nextFace.makeEdges();
+                nextFace.split_all_edges();
                 nextFace.split_inside();
                 for (Face newFace : nextFace.getComponentFaces()){
                     //newFace.setDepth(depth+1); //without this line, split_inside needs to set depth.

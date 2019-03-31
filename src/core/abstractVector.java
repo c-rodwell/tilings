@@ -11,8 +11,22 @@ public class abstractVector {
         this.dy = dy;
     }
 
+    //unit vector from angle
+    public static abstractVector fromAngle(double theta){
+        return new abstractVector(Math.cos(theta), Math.sin(theta));
+    }
+
+    //(x,y) vector from r and theta
+    public static abstractVector fromPolar(double r, double theta){
+        return fromAngle(theta).scale(r);
+    }
+
     public double length(){
         return Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
+    }
+
+    public double angle(){
+        return Math.atan2(dy, dx);
     }
 
     public abstractVector scale(double scale){
@@ -23,21 +37,20 @@ public class abstractVector {
         return scale(1.0/length());
     }
 
-    //a vector perpendicular to this one.
+    //a vector perpendicular to this one, with same length
     // note scaling by any factor, including negative, is also perpendicular
     public abstractVector perpendicular(){
-        return new abstractVector(-dy, dx); //could also use (dy, -dx) or others
+        return new abstractVector(-dy, dx); //could also use (dy, -dx)
     }
 
-    public double toAngle(){
-        return Math.atan2(dy, dx);
+    //perpendicular vector with length 1. remember the negative of this is also a normal vector.
+    public abstractVector normalVector(){
+        return perpendicular().normalize();
     }
 
-    //unit vector from angle
-    public static abstractVector fromAngle(double theta){
-        return new abstractVector(Math.cos(theta), Math.sin(theta));
+    public abstractVector rotate(double theta){
+        return fromPolar(length(), angle()+theta);
     }
-
 
     @Override
     public String toString() {

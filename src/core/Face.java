@@ -1,5 +1,7 @@
 package core;
 
+import jdk.jshell.spi.ExecutionControl;
+
 import java.util.ArrayList;
 
 //wrapper around abstractPolygon which has the division behavior
@@ -16,13 +18,11 @@ public class Face {
         //System.out.println("Face constructor with no params");
     }
 
-
     public Face(abstractPolygon polygon){
         //System.out.println("Face constructor with polygon = "+polygon);
         //this.polygon = polygon;
         setPolygon(polygon);
-        edges = new ArrayList<>();
-        //create the edges?
+        edges = null; //create the edges here?
         component_faces = new ArrayList<>();
         component_edges = new ArrayList<>();
     }
@@ -66,6 +66,10 @@ public class Face {
         return polygon.getPoint(i);
     }
 
+    public abstractPoint getcenter(){
+        return polygon.getCenter();
+    }
+
     public ArrayList<Edge> getEdges() {
         return edges;
     }
@@ -85,12 +89,20 @@ public class Face {
         return edges;
     }
 
-    public void split_edges(){
+    public void split_all_edges(){
+        if (edges == null){
+            makeEdges();
+        }
+        for (Edge edge : getEdges()){
+            split_edge(edge);
+        }
+    }
 
+    //leave these blank - if not implemented in subclass, does nothing
+    public void split_edge(Edge edge){
     }
 
     public void split_inside(){
-
     }
 
     public ArrayList<Face> getComponentFaces(){
@@ -99,6 +111,16 @@ public class Face {
 
     public ArrayList<Edge> getComponentEdges(){
         return component_edges;
+    }
+
+    public void addFace(Face face){
+        face.setDepth(depth+1);
+        component_faces.add(face);
+    }
+
+    public void addFace(Face face, int new_depth){
+        face.setDepth(new_depth);
+        component_faces.add(face);
     }
 
 

@@ -1,8 +1,5 @@
-package golden_triangles;
+package GoldenTriangles;
 import core.*;
-
-import java.util.ArrayList;
-import java.util.Arrays;
 
 public class Golden221 extends Face {
 
