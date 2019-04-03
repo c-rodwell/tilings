@@ -1,4 +1,4 @@
-package GoldenTriangles;
+package patterns.GoldenTriangles;
 import core.*;
 
 public class Golden221 extends Face {

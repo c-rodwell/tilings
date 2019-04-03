@@ -1,23 +1,45 @@
 package core;
 
+import java.util.ArrayList;
+import java.util.Collections;
+
 public class Edge {
-    Face side1;
-    Face side2;
-    private abstractPoint end1;
-    abstractPoint end2;
-    double edgeLength;
+    protected Face rightSide;
+    protected Face leftSide;
+    protected abstractPoint end1;
+    protected abstractPoint end2;
+    protected double edgeLength;
+    protected ArrayList<abstractPoint> splitPointsRight;
+    protected ArrayList<abstractPoint> splitPointsLeft;
+    protected ArrayList<Edge> splitEdgesRight;
+    protected ArrayList<Edge> splitEdgesLeft;
+    protected ArrayList<Face> splitFaces;
 
     public Edge(Face side1, Face side2, abstractPoint end1, abstractPoint end2){
-        this.side1 = side1;
-        this.side2 = side2;
+        this.rightSide = side1;
+        this.leftSide = side2;
         this.end1  = end1;
         this.end2  = end2;
         edgeLength = abstractPoint.distance(end1, end2);
+        splitPointsRight = new ArrayList<>();
+        splitPointsLeft = new ArrayList<>();
+        splitFaces = new ArrayList<>();
+        splitEdgesRight = new ArrayList<>();
+        splitEdgesLeft = new ArrayList<>();
     }
 
     @Override
     public String toString() {
-        return "Edge:\n\tside1 = "+side1+"\n\tside2 = "+side2+"\n\tend1 = "+end1+"\n\tend2 = "+end2;
+        return "Edge:\n\trightSide = "+rightSide+"\n\tleftSide = "+leftSide
+                +"\n\tend1 = "+end1+"\n\tend2 = "+end2
+//                +"\n\tsplitPointsRight = "+splitPointsRight+"\n\tsplitPointsLeft = "+splitPointsLeft
+//                +"\n\tsplitEdgesRight = "+splitEdgesRight+"\n\tsplitEdgesLeft = "+splitEdgesLeft
+//                +"\n\tsplitFaces = "+splitFaces
+                +"\n\tsplitPointsRight = "+splitPointsRight.size()+" points"
+                +"\n\tsplitPointsLeft = "+splitPointsLeft.size()+" points"
+                +"\n\tsplitEdgesRight = "+splitEdgesRight.size()+" edges"
+                +"\n\tsplitEdgesLeft = "+splitEdgesLeft.size()+" edges"
+                +"\n\tsplitFaces = "+splitFaces;
     }
 
     public abstractPoint getEnd1() {
@@ -26,6 +48,26 @@ public class Edge {
 
     public abstractPoint getEnd2() {
         return end2;
+    }
+
+    public Face getRightSide(){
+        return rightSide;
+    }
+
+    public Face getLeftSide() {
+        return leftSide;
+    }
+
+    public void setRightSide(Face side1) {
+        this.rightSide = side1;
+    }
+
+    public void setLeftSide(Face side2) {
+        this.leftSide = side2;
+    }
+
+    public ArrayList<Face> getSplitFaces(){
+        return splitFaces;
     }
 
     public abstractPoint midPoint(){
@@ -84,11 +126,26 @@ public class Edge {
     }
 
     //split into pieces - these can be points, edges, faces
-    //how to return multiple types?
-        //as map
-        //void, but create references in this object
+    //void, but create references in this object to the faces and points
     public void split(){
+        //implement this in subclasses
+    }
 
+    public void giveSplitsToFace(boolean toRight){
+//        ArrayList<abstractPoint> splitPointsCopy = (ArrayList<abstractPoint>) splitPoints.clone();
+//        ArrayList<Edge> splitEdgesCopy = (ArrayList<Edge>) splitEdges.clone();
+
+        if (toRight){
+            ArrayList<abstractPoint> splitPointsCopy = (ArrayList<abstractPoint>) splitPointsRight.clone();
+            ArrayList<Edge> splitEdgesCopy = (ArrayList<Edge>) splitEdgesRight.clone();
+            rightSide.setEdgeSplit(this, splitPointsCopy, splitEdgesCopy);
+        } else {
+            ArrayList<abstractPoint> splitPointsCopy = (ArrayList<abstractPoint>) splitPointsLeft.clone();
+            ArrayList<Edge> splitEdgesCopy = (ArrayList<Edge>) splitEdgesLeft.clone();
+            Collections.reverse(splitPointsCopy);
+            Collections.reverse(splitEdgesCopy);
+            leftSide.setEdgeSplit(this, splitPointsCopy, splitEdgesCopy);
+        }
     }
 
     //break into points/edges by dividing the length into

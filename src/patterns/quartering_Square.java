@@ -1,3 +1,5 @@
+package patterns;
+
 import core.Edge;
 import core.Face;
 import core.abstractPoint;

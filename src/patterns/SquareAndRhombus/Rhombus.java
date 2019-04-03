@@ -1,8 +1,7 @@
-package SquareAndRhombus;
+package patterns.SquareAndRhombus;
 
 import core.*;
 
-import java.awt.*;
 import java.util.ArrayList;
 
 public class Rhombus extends Face {
@@ -15,10 +14,10 @@ public class Rhombus extends Face {
         return new Rhombus(new Edge(null, null, p1, p2).rhombusOnEdge(3.0*Math.PI/4.0));
     }
 
-    public static Rhombus fromShortDiag(abstractPoint p1, abstractPoint p2){
-        return new Rhombus(new Edge(null, null, p1, p2).rhombusOnEdge(Math.PI/4.0));
-    }
-
+    //currently fromShortDiag makes a rhombus with wrong vertex ordering - will split wrong.
+//    public static Rhombus fromShortDiag(abstractPoint p1, abstractPoint p2){
+//        return new Rhombus(new Edge(null, null, p1, p2).rhombusOnEdge(Math.PI/4.0));
+//    }
 
     public void split_edge(Edge edge){
         //add things to component_faces for now , maybe should be in a different structure

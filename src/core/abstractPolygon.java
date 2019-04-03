@@ -12,7 +12,8 @@ public class abstractPolygon {
     private ArrayList<abstractPoint> points;
     protected abstractPoint center;
     //private ArrayList<Edge> edges;
-
+    private double radius; //should only use this for regular polygons, otherwise not defined
+    private double angle;
 
     public abstractPolygon(){
         npoints = 0;
@@ -57,12 +58,23 @@ public class abstractPolygon {
         return points.get(i);
     }
 
+    //center, radius, angle only apply to regular polygons
+
     public abstractPoint getCenter() {
         if (center == null){
             center = abstractPoint.averagePoint(points);
         }
         return center;
     }
+
+    public double getRadius(){
+        return radius;
+    }
+
+    public double getAngle(){
+        return angle;
+    }
+
 
     //    public void addPoint(double x, double y){
 //        npoints += 1;
@@ -86,16 +98,21 @@ public class abstractPolygon {
         return npoints;
     }
 
-    public static abstractPolygon regPolyOnCircle(int degree, double radius, double center_x, double center_y, double rotation){
+    public static abstractPolygon regPolyOnCircle(int degree, double radius, double center_x, double center_y, double rotation) {
+        return regPolyOnCircle(degree, radius, new abstractPoint(center_x, center_y), rotation);
+    }
+
+    public static abstractPolygon regPolyOnCircle(int degree, double radius, abstractPoint center, double rotation){
         abstractPolygon p = new abstractPolygon();
-        //p.npoints = degree;
-        p.center = new abstractPoint(center_x, center_y);
+        p.center = center;
+        p.radius = radius;
+        p.angle = rotation;
         //point on a circle: x = r*cos(theta) , y = r*sin(theta)
         for (int i=0; i<degree; i++){
             double theta = (2*Math.PI *((float)i / (float)degree)) + rotation;
             //System.out.println("theta = "+theta);
-            double x = ( radius * Math.cos(theta) ) + center_x;
-            double y = ( radius * Math.sin(theta) ) + center_y;
+            double x = ( radius * Math.cos(theta) ) + center.getX();
+            double y = ( radius * Math.sin(theta) ) + center.getY();
             p.addPoint( x, y);
             //System.out.println("adding point: "+x+", "+y);
         }

@@ -1,3 +1,5 @@
+package patterns;
+
 import core.Edge;
 import core.Face;
 import core.abstractPoint;
@@ -14,7 +16,7 @@ public class quarteringTriangle extends Face {
 
     public quarteringTriangle(double radius, double center_x, double center_y, double rotation){
         super( abstractPolygon.regPolyOnCircle(3, radius, center_x, center_y, rotation));
-//        System.out.println("quarteringTriangle constructor with radius = " +radius
+//        System.out.println("patterns.quarteringTriangle constructor with radius = " +radius
 //                +", center_x = "+center_x  +", center_y = "+center_y+", rotation = "+rotation);
     }
 

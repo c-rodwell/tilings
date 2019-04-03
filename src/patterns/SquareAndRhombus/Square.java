@@ -1,9 +1,6 @@
-package SquareAndRhombus;
+package patterns.SquareAndRhombus;
 
 import core.*;
-
-import java.util.ArrayList;
-import java.util.Arrays;
 
 public class Square extends Face {
 
