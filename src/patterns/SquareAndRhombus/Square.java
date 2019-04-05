@@ -25,10 +25,10 @@ public class Square extends Face {
         System.out.println("in split_inside");
         System.out.println("polygon = "+polygon);
 
-        Edge outer1 = edges.get(0);
-        Edge outer2 = edges.get(0);
-        Edge outer3 = edges.get(0);
-        Edge outer4 = edges.get(0);
+        Edge outer1 = getEdge(0);
+        Edge outer2 = getEdge(0);
+        Edge outer3 = getEdge(0);
+        Edge outer4 = getEdge(0);
 
         abstractPoint corner1 = getPoint(0);
         abstractPoint corner2 = getPoint(1);

@@ -4,11 +4,13 @@ import jdk.jshell.spi.ExecutionControl;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 //wrapper around abstractPolygon which has the division behavior
 public class Face {
     protected abstractPolygon polygon;
-    protected ArrayList<Edge> edges;
+    //protected ArrayList<Edge> edges;
+    protected Edge[] edges;
     //ArrayList<Face> neighbors; do we want list of neighbors, or just reference through edges?
     protected ArrayList<Face> component_faces;
     protected ArrayList<Edge> component_edges;
@@ -27,19 +29,24 @@ public class Face {
     public Face(abstractPolygon polygon){
         //System.out.println("Face constructor with polygon = "+polygon);
         //this.polygon = polygon;
+        int npoints = polygon.getNpoints();
         setPolygon(polygon);
-        edges = null; //create the edges here?
+        //edges = null;
+        edges = new Edge[npoints];
+
         component_faces = new ArrayList<>();
         component_edges = new ArrayList<>();
 
-        edgePoints = new ArrayList[getNpoints()];
-        edgeEdges = new ArrayList[getNpoints()];
+        edgePoints = new ArrayList[npoints];
+        edgeEdges = new ArrayList[npoints];
     }
 
-    public Face(abstractPolygon polygon, ArrayList<Edge> edges){
-        this.polygon = polygon;
-        this.edges = edges;
-    }
+    //public Face()
+
+//    public Face(abstractPolygon polygon, ArrayList<Edge> edges){
+//        this.polygon = polygon;
+//        this.edges = edges;
+//    }
 
     public void setPolygon(abstractPolygon polygon){
         this.polygon = polygon;
@@ -79,49 +86,58 @@ public class Face {
         return polygon.getCenter();
     }
 
-    public ArrayList<Edge> getEdges() {
+    public Edge[] getEdges() {
         return edges;
     }
 
     public Edge getEdge(int i){
-        return edges.get(i);
+        return edges[i];
     }
 
-    public ArrayList<Edge> makeEdges(){
-        ArrayList<Edge> edges = new ArrayList<>();
+//    public ArrayList<Edge> makeEdges(){
+//        ArrayList<Edge> edges = new ArrayList<>();
+//        int npoints = getNpoints();
+//        for (int i = 0; i<npoints; i ++){
+//            abstractPoint point1 = getPoint(i);
+//            abstractPoint point2 = getPoint((i+1) % npoints);
+//            //Face neighbor = neighbors.get(i);
+//            //Edge edge = new Edge(this, neighbor, point1, point2);
+//            //Edge edge = new Edge(this, null, point1, point2);
+//            edges.add(makeEdge(this, null, point1, point2));
+//        }
+//        this.edges = edges;
+//        return edges;
+//    }
+
+    //create all edges which were not already created (null if not created)
+    public void makeEdges(){
         int npoints = getNpoints();
         for (int i = 0; i<npoints; i ++){
-            abstractPoint point1 = getPoint(i);
-            abstractPoint point2 = getPoint((i+1) % npoints);
-            //Face neighbor = neighbors.get(i);
-            //Edge edge = new Edge(this, neighbor, point1, point2);
-            //Edge edge = new Edge(this, null, point1, point2);
-            edges.add(makeEdge(this, null, point1, point2));
+            if (edges[i] == null){
+                abstractPoint point1 = getPoint(i);
+                abstractPoint point2 = getPoint((i+1) % npoints);
+                edges[i] = makeEdge(this, null, point1, point2);
+            }
         }
-        this.edges = edges;
-        return edges;
     }
 
     //subclasses can override this to make an Edge subclass instead
-    public Edge makeEdge(Face side1, Face side2, abstractPoint point1, abstractPoint point2){
-        return new Edge(side1, side2, point1, point2);
+    public Edge makeEdge(Face leftside, Face rightside, abstractPoint point1, abstractPoint point2){
+        return new Edge(leftside, rightside, point1, point2);
     }
 
 
     public void split_all_edges(){
-        if (edges == null){
-            makeEdges();
-        }
+//        if (edges == null){
+//            makeEdges();
+//        }
         for (Edge edge : getEdges()){
-            split_edge(edge);
+            edge.split();
         }
-    }
-
-    //leave these blank - if not implemented in subclass, does nothing
-    public void split_edge(Edge edge){
     }
 
     public void split_inside(){
+        //implement in subclasses
     }
 
     public ArrayList<Face> getComponentFaces(){
@@ -151,10 +167,23 @@ public class Face {
         component_faces.add(face);
     }
 
+    public void addEdge(Edge edge){
+        edge.setDepth(depth+1);
+        component_edges.add(edge);
+    }
+
+    //for recurrences like golden triangles where depth step is variable
+    public void addEdge(Edge edge, int new_depth){
+        edge.setDepth(new_depth);
+        component_edges.add(edge);
+    }
+
     //set split information corresponding to the edge
     public void setEdgeSplit(Edge edge, ArrayList<abstractPoint> splitPoints, ArrayList<Edge> splitEdges){
-        int index = edges.indexOf(edge);
-        if ((index < 0) || (index >= edges.size())){
+        //int index = edges.indexOf(edge);
+        int index = Arrays.asList(edges).indexOf(edge);
+
+        if ((index < 0) || (index >= edges.length)){
             throw new RuntimeException("edge was not in the edges list for that face");
         }
         //edgePoints[index] = (abstractPoint[]) splitPoints.toArray();
@@ -163,8 +192,7 @@ public class Face {
         edgeEdges[index] = splitEdges;
     }
 
-
-
+    //override this in subclasses to set color of the face type. null will draw as random color
     public Color getColor(){
         return null;
     }

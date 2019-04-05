@@ -14,10 +14,12 @@ public class Edge {
     protected ArrayList<Edge> splitEdgesRight;
     protected ArrayList<Edge> splitEdgesLeft;
     protected ArrayList<Face> splitFaces;
+    protected boolean wasSplit;
+    protected int depth;
 
-    public Edge(Face side1, Face side2, abstractPoint end1, abstractPoint end2){
-        this.rightSide = side1;
-        this.leftSide = side2;
+    public Edge(Face leftSide, Face rightSide, abstractPoint end1, abstractPoint end2){
+        this.leftSide = leftSide;
+        this.rightSide = rightSide;
         this.end1  = end1;
         this.end2  = end2;
         edgeLength = abstractPoint.distance(end1, end2);
@@ -26,6 +28,7 @@ public class Edge {
         splitFaces = new ArrayList<>();
         splitEdgesRight = new ArrayList<>();
         splitEdgesLeft = new ArrayList<>();
+        wasSplit = false;
     }
 
     @Override
@@ -68,6 +71,14 @@ public class Edge {
 
     public ArrayList<Face> getSplitFaces(){
         return splitFaces;
+    }
+
+    public int getDepth(){
+        return depth;
+    }
+
+    public void setDepth(int depth){
+        this.depth = depth;
     }
 
     public abstractPoint midPoint(){
@@ -131,20 +142,18 @@ public class Edge {
         //implement this in subclasses
     }
 
-    public void giveSplitsToFace(boolean toRight){
-//        ArrayList<abstractPoint> splitPointsCopy = (ArrayList<abstractPoint>) splitPoints.clone();
-//        ArrayList<Edge> splitEdgesCopy = (ArrayList<Edge>) splitEdges.clone();
-
-        if (toRight){
-            ArrayList<abstractPoint> splitPointsCopy = (ArrayList<abstractPoint>) splitPointsRight.clone();
-            ArrayList<Edge> splitEdgesCopy = (ArrayList<Edge>) splitEdgesRight.clone();
-            rightSide.setEdgeSplit(this, splitPointsCopy, splitEdgesCopy);
-        } else {
-            ArrayList<abstractPoint> splitPointsCopy = (ArrayList<abstractPoint>) splitPointsLeft.clone();
-            ArrayList<Edge> splitEdgesCopy = (ArrayList<Edge>) splitEdgesLeft.clone();
-            Collections.reverse(splitPointsCopy);
-            Collections.reverse(splitEdgesCopy);
-            leftSide.setEdgeSplit(this, splitPointsCopy, splitEdgesCopy);
+    public void giveSplitsToFaces(){
+        if (rightSide != null) {
+            ArrayList<abstractPoint> splitPointsRightCopy = (ArrayList<abstractPoint>) splitPointsRight.clone();
+            ArrayList<Edge> splitEdgesRightCopy = (ArrayList<Edge>) splitEdgesRight.clone();
+            Collections.reverse(splitPointsRightCopy);
+            Collections.reverse(splitEdgesRightCopy);
+            rightSide.setEdgeSplit(this, splitPointsRightCopy, splitEdgesRightCopy);
+        }
+        if (leftSide != null){
+            ArrayList<abstractPoint> splitPointsLeftCopy = (ArrayList<abstractPoint>) splitPointsLeft.clone();
+            ArrayList<Edge> splitEdgesLeftCopy = (ArrayList<Edge>) splitEdgesLeft.clone();
+            leftSide.setEdgeSplit(this, splitPointsLeftCopy, splitEdgesLeftCopy);
         }
     }
 

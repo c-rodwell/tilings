@@ -38,11 +38,11 @@ public class Rhombus extends Face {
         abstractPoint point2 = getPoint(2);
         abstractPoint point3 = getPoint(3);
 
-        ArrayList<Edge> Edges = getEdges();
-        Edge edge1 = Edges.get(0);
-        Edge edge2 = Edges.get(1);
-        Edge edge3 = Edges.get(2);
-        Edge edge4 = Edges.get(3);
+        //ArrayList<Edge> Edges = getEdges();
+        Edge edge1 = getEdge(0);
+        Edge edge2 = getEdge(1);
+        Edge edge3 = getEdge(2);
+        Edge edge4 =getEdge(3);
 
         abstractPoint mid12 = edge1.pointAtProportion(1.0, 1.0+Math.sqrt(2.0));
         abstractPoint mid11 = edge1.pointAtProportion(1.0+Math.sqrt(2.0), 1.0);

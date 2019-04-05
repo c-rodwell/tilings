@@ -8,10 +8,8 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import core.*;
-import patterns.*;
 import patterns.PentagonAndStar.PSEdge;
 import patterns.PentagonAndStar.Pentagon;
-import patterns.SquareAndRhombus.Rhombus;
 
 
 //using graphics2d setup from https://www.javaworld.com/article/2076715/getting-started-with-java-2d.html
@@ -196,38 +194,51 @@ public class GraphicsPanel extends JPanel {
 ////            drawPoint(face.getPoint(3), g2d, 4, Color.red);
 //        }
 
+        //____________________one PentagonAndStar.pentagon edge splitting____________________
         Pentagon starPentagon = Pentagon.onCircle(150, new abstractPoint(100, 300), 1*Math.PI/5.0);
-        //drawFace(starPentagon, g2d, Color.black, false);
-        //ArrayList<Face> pentagonParts = split_iterate(starPentagon, 2);
-        //drawShapes(pentagonParts, g2d);
+        drawFace(starPentagon, g2d, Color.black, false);
+        ArrayList<Face> pentagonParts = split_iterate(starPentagon, 2);
+        drawShapes(pentagonParts, g2d);
 
         starPentagon.makeEdges();
-        ArrayList<Edge> edges = starPentagon.getEdges();
-        //clarifyOrder(starPentagon, g2d);
-
-
-        System.out.println("total edges = "+edges.size());
+        Edge[] edges = starPentagon.getEdges();
+        //showEdgeAndPointOrder(starPentagon, g2d);
+        System.out.println("total edges = "+edges.length);
         for (Edge edge : edges){
             edge.split();
-            edge.giveSplitsToFace(true);
             //drawShapes(edge.getSplitFaces(), g2d);
-            clarifyOrder(edge.getSplitFaces().get(0), g2d);
+            //showEdgeAndPointOrder(edge.getSplitFaces().get(0), g2d);
             System.out.println(edge);
         }
+        showBoundarySplit(starPentagon, g2d);
 
-        ArrayList<Edge>[] edgeEdges = starPentagon.getEdgeEdges();
-        ArrayList<abstractPoint>[] edgePoints = starPentagon.getEdgePoints();
-
-        int i = 0;
-        for (Edge edge: edgeEdges[i]){
-            drawEdge(edge, g2d, Color.black);
-        }
-//        System.out.println(edgeEdges[0]);
+        //____________________two PentagonAndStar.pentagon on same edge____________________
+//        PSEdge mainEdge = new PSEdge(null, null, new abstractPoint(150, 325), new abstractPoint(50, 325));
+//        Pentagon p1 = Pentagon.onEdge(mainEdge, true);
+//        Pentagon p2 = Pentagon.onEdge(mainEdge, false);
+//        p1.makeEdges();
+//        p2.makeEdges();
+//
+//        //mainEdge.split();
+//        p1.split_all_edges();
+//        p2.split_all_edges();
+//
+//        drawFace(p1, g2d, Color.lightGray, true);
+//        drawFace(p2, g2d, Color.darkGray, true);
+//        //showEdgeAndPointOrder(p1, g2d);
+//        //showEdgeAndPointOrder(p2, g2d);
+//        //showBoundarySplit(p1, g2d);
+//        showBoundarySplit(p2, g2d);
+//
+//        for (Edge edge: p1.getEdges()){
+//            System.out.println(edge);
+//        }
+//        drawPoint(mainEdge.getEnd1(), g2d, 6, Color.black);
 
     }
 
     //debugging tool to check the point and edge order
-    public void clarifyOrder(Face face, Graphics g){
+    public void showEdgeAndPointOrder(Face face, Graphics g){
         Color[] Colors = {Color.red, Color.green, Color.blue, Color.cyan, Color.magenta, Color.yellow, Color.black, Color.orange, Color.gray };
         for (int i=0; i<face.getNpoints(); i++){
             Color color = Colors[i % Colors.length];
@@ -235,6 +246,26 @@ public class GraphicsPanel extends JPanel {
             drawPoint(face.getPoint(i), g, 10, color);
         }
     }
+
+    //for some face, show the new boundary points and edges after a split
+    public void showBoundarySplit(Face face, Graphics g){
+        Color[] Colors = {Color.red, Color.green, Color.blue, Color.cyan, Color.magenta, Color.yellow, Color.black, Color.orange, Color.gray };
+        for (int i=0; i<face.getNpoints(); i++){ //face.getNpoints()
+            ArrayList<Edge> edges = face.getEdgeEdges()[i];
+            if (edges != null) {
+                for (int j = 0; j < edges.size(); j++){//(Edge edge : edges) {
+                    drawEdge(edges.get(j), g, Colors[j % Colors.length]);
+                }
+            }
+            ArrayList<abstractPoint> points = face.getEdgePoints()[i];
+            if (points != null){
+                for(int k = 0; k<points.size(); k++){//(abstractPoint point : face.getEdgePoints()[i]) {
+                    drawPoint(points.get(k), g, 10, Colors[k % Colors.length]);
+                }
+            }
+        }
+    }
+
 
     //should this be able to draw points and edges too?
     public void drawShapes(ArrayList<Face> shapes, Graphics g ){

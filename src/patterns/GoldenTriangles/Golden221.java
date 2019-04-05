@@ -48,9 +48,9 @@ public class Golden221 extends Face {
         abstractPoint corner2 = polygon.getPoint(1);
         abstractPoint corner3 = polygon.getPoint(2);
 
-        Edge base = edges.get(0);
-        Edge leg1 = edges.get(1);
-        Edge leg2 = edges.get(2);
+        Edge base = getEdge(0);
+        Edge leg1 = getEdge(1);
+        Edge leg2 = getEdge(2);
 
         //split the edge by golden ratio, get the point and edges
         //should this use Edge.splitByRatio instead?

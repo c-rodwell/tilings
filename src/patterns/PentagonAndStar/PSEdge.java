@@ -14,15 +14,25 @@ public class PSEdge extends core.Edge {
     }
 
     public void split(){
+        if (wasSplit){
+            return;
+        }
         double phi = (1.0 +Math.sqrt(5.0))/2.0;
         double[] proportions = {phi, 1.0, phi};
         Edge[] pieces = splitByRatio(proportions);
 
         Edge edge1 = pieces[0];
+        Edge middlePart = pieces[1]; //middle part won't be added as an Edge, just used to make rhombus and points
+        Edge edge2 = pieces[2];
+        abstractPoint[] bothPoints = middlePart.bisectingPointsAtAngle(Math.PI/5.0); //ends of the rhombus
+        abstractPoint rightPoint = bothPoints[0];
+        abstractPoint leftPoint = bothPoints[1];
+
+        //fist part to add is always edge1
         splitEdgesRight.add(edge1);
         splitEdgesLeft.add(edge1);
-        splitPointsRight.add(end1);
-        splitPointsLeft.add(end1);
+        splitPointsLeft.add(middlePart.getEnd1());
+        splitPointsRight.add(middlePart.getEnd1());
 
         //cases for middle part:
             //two pentagons - make a Rhombus
@@ -34,11 +44,7 @@ public class PSEdge extends core.Edge {
         //so, can treat as two cases: (null/pentagon) vs other shape
 
         boolean rightSticksOut = ((rightSide != null) && (rightSide.getClass() != Pentagon.class));
-        boolean leftSticksOut = ((rightSide != null) && (rightSide.getClass() != Pentagon.class));
-
-        abstractPoint[] bothPoints = pieces[1].bisectingPointsAtAngle(Math.PI/5.0);
-        abstractPoint leftPoint = bothPoints[0];
-        abstractPoint rightPoint = bothPoints[1];
+        boolean leftSticksOut = ((leftSide != null) && (leftSide.getClass() != Pentagon.class));
 
         if (rightSticksOut && leftSticksOut){
             throw new RuntimeException("Illegal pattern: two non-pentagon shapes touching");
@@ -47,20 +53,24 @@ public class PSEdge extends core.Edge {
         } else if (leftSticksOut){
 
         } else {
-            Rhombus edgeRhombus = Rhombus.fromLongDiag(leftPoint, rightPoint);
+            Rhombus edgeRhombus = Rhombus.fromLongDiag(rightPoint, leftPoint);
             splitFaces.add(edgeRhombus);
             edgeRhombus.makeEdges();
+            splitEdgesRight.add(edgeRhombus.getEdge(3));
+            splitEdgesRight.add(edgeRhombus.getEdge(0));
 
-            splitEdgesRight.add(edgeRhombus.getEdges().get(1));
-            splitEdgesRight.add(edgeRhombus.getEdges().get(2));
-            splitEdgesLeft.add(edgeRhombus.getEdges().get(3));
-            splitEdgesLeft.add(edgeRhombus.getEdges().get(0));
+            splitEdgesLeft.add(edgeRhombus.getEdge(2));
+            splitEdgesLeft.add(edgeRhombus.getEdge(1));
+
+            splitPointsLeft.add(leftPoint);
+            splitPointsRight.add(rightPoint);
         }
 
-        Edge edge2 = pieces[2];
         splitEdgesRight.add(edge2);
         splitEdgesLeft.add(edge2);
-        splitPointsRight.add(end2);
-        splitPointsLeft.add(end2);
+        splitPointsLeft.add(middlePart.getEnd2());
+        splitPointsRight.add(middlePart.getEnd2());
+        giveSplitsToFaces();
+        wasSplit = true;
     }
 }

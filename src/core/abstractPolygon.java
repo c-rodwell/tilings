@@ -120,18 +120,21 @@ public class abstractPolygon {
     }
 
     //try it using a different method
-    public static abstractPolygon regPolyOnEdge(int degree, Edge edge, boolean chooseFirst){
+    public static abstractPolygon regPolyOnEdge(int degree, Edge edge, boolean onLeft){
         abstractPolygon aP = new abstractPolygon();
         double center_angle = 2*Math.PI/degree;
         abstractPoint[] possible_centers = edge.bisectingPointsAtAngle(center_angle);
         abstractPoint center;
-        if (chooseFirst){
-            center = possible_centers[0];
-        } else{
+        abstractPoint point0;
+        if (onLeft){
             center = possible_centers[1];
+            point0 = edge.getEnd1();
+        } else{
+            center = possible_centers[0];
+            point0 = edge.getEnd2();
         }
         double radius = edge.edgeLength / (2*Math.sin(center_angle/2.0));
-        double rotation = edge.getEnd1().differenceFrom(center).angle();
+        double rotation = point0.differenceFrom(center).angle();
         return regPolyOnCircle(degree, radius, center.x, center.y, rotation );
     }
 

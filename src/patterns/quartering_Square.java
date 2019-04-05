@@ -35,10 +35,10 @@ public class quartering_Square extends Face {
         System.out.println("polygon = "+polygon);
         abstractPoint center = polygon.getCenter();
 
-        abstractPoint mid1 = edges.get(0).midPoint();
-        abstractPoint mid2 = edges.get(1).midPoint();
-        abstractPoint mid3 = edges.get(2).midPoint();
-        abstractPoint mid4 = edges.get(3).midPoint();
+        abstractPoint mid1 = getEdge(0).midPoint();
+        abstractPoint mid2 = getEdge(1).midPoint();
+        abstractPoint mid3 = getEdge(2).midPoint();
+        abstractPoint mid4 = getEdge(3).midPoint();
 
         abstractPoint corner1 = polygon.getPoint(0);
         abstractPoint corner2 = polygon.getPoint(1);
