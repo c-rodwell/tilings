@@ -84,7 +84,6 @@ public class Pentagon extends Face{
                 Pentagon cornerPentagon = new Pentagon(new abstractPolygon(vertices));
                 addFace(cornerPentagon);
 
-                cornerPentagon.
             }
 
     }
