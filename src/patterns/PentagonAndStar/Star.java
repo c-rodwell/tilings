@@ -15,7 +15,7 @@ public class Star extends Face {
 
     }
 
-    public void split_inside() {
+    public void split() {
 
     }
 }

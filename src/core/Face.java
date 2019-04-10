@@ -1,13 +1,16 @@
 package core;
 
+import display.GraphicsPanel;
 import jdk.jshell.spi.ExecutionControl;
 
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Random;
 
 //wrapper around abstractPolygon which has the division behavior
-public class Face {
+public class Face implements Fractal{
     protected abstractPolygon polygon;
     //protected ArrayList<Edge> edges;
     protected Edge[] edges;
@@ -20,6 +23,7 @@ public class Face {
 
     protected int depth;
     //protected abstractPoint center;
+    protected boolean wasSplit;
 
     //default constructor  so subclass constructors don't complain
     public Face(){
@@ -39,6 +43,7 @@ public class Face {
 
         edgePoints = new ArrayList[npoints];
         edgeEdges = new ArrayList[npoints];
+        wasSplit = false;
     }
 
     //public Face()
@@ -136,7 +141,7 @@ public class Face {
         }
     }
 
-    public void split_inside(){
+    public void split(){
         //implement in subclasses
     }
 
@@ -197,7 +202,33 @@ public class Face {
         return null;
     }
 
+    public HashMap getParts(){
+        HashMap<String, ArrayList> parts = new HashMap();
+        parts.put("Edges", component_edges);
+        parts.put("Faces", component_faces);
+        return parts;
+    }
 
+    public void draw(Graphics g, GraphicsPanel gp){
+        int npoints = polygon.getNpoints();
+        int[] xpoints = new int[npoints];
+        int[] ypoints = new int[npoints];
+
+        for(int i=0; i<npoints; i++){
+            abstractPoint point = polygon.getPoint(i);
+            int[] new_point = gp.mapCoords(point);
+            xpoints[i] = new_point[0];
+            ypoints[i] = new_point[1];
+        }
+        Color color = getColor();
+        if (color == null){
+            Random r = new Random();
+            color = Color.getHSBColor(r.nextFloat(), r.nextFloat(), r.nextFloat());
+        }
+        g.setColor(color);
+        Polygon P = new Polygon(xpoints, ypoints, npoints);
+        g.fillPolygon(P);
+    }
 
 
 }

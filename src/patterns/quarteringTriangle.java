@@ -24,10 +24,10 @@ public class quarteringTriangle extends Face {
 
     }
 
-    public void split_inside(){
+    public void split(){
 
         //important points on the square
-        System.out.println("in split_inside");
+        System.out.println("in split");
         System.out.println("polygon = "+polygon);
         abstractPoint center = polygon.getCenter();
 

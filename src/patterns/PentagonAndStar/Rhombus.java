@@ -14,11 +14,7 @@ public class Rhombus extends Face {
         return new Rhombus(new Edge(null, null, p1, p2).rhombusOnEdge(4*Math.PI/5.0));
     }
 
-    public void split_edge(Edge edge){
-
-    }
-
-    public void split_inside() {
+    public void split() {
 
     }
 

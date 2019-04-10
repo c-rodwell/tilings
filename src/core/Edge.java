@@ -1,9 +1,13 @@
 package core;
 
+import display.GraphicsPanel;
+
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 
-public class Edge {
+public class Edge implements Fractal{
     protected Face rightSide;
     protected Face leftSide;
     protected abstractPoint end1;
@@ -11,9 +15,10 @@ public class Edge {
     protected double edgeLength;
     protected ArrayList<abstractPoint> splitPointsRight;
     protected ArrayList<abstractPoint> splitPointsLeft;
-    protected ArrayList<Edge> splitEdgesRight;
-    protected ArrayList<Edge> splitEdgesLeft;
-    protected ArrayList<Face> splitFaces;
+    private ArrayList<Edge> splitEdges;
+    private ArrayList<Edge> splitEdgesRight;
+    private ArrayList<Edge> splitEdgesLeft;
+    private ArrayList<Face> splitFaces;
     protected boolean wasSplit;
     protected int depth;
 
@@ -26,6 +31,7 @@ public class Edge {
         splitPointsRight = new ArrayList<>();
         splitPointsLeft = new ArrayList<>();
         splitFaces = new ArrayList<>();
+        splitEdges = new ArrayList<>();
         splitEdgesRight = new ArrayList<>();
         splitEdgesLeft = new ArrayList<>();
         wasSplit = false;
@@ -178,5 +184,45 @@ public class Edge {
         }
         return pieces;
     }
+
+    public HashMap getParts(){
+        HashMap<String, ArrayList> parts = new HashMap();
+        parts.put("Edges", splitEdges);
+        parts.put("Faces", splitFaces);
+        return parts;
+    }
+
+    public void addFace(Face face, int depth_increment){
+        face.setDepth(getDepth()+depth_increment);
+        splitFaces.add(face);
+    }
+
+    public void addFace(Face face){
+        addFace(face, 1);
+    }
+
+    public void addEdge(Edge edge, boolean addLeft, boolean addRight, int depth_increment){
+        edge.setDepth(getDepth()+depth_increment);
+        splitEdges.add(edge);
+        if (addLeft){
+            splitEdgesLeft.add(edge);
+        }
+        if (addRight){
+            splitEdgesRight.add(edge);
+        }
+    }
+
+    public void addEdge(Edge edge, boolean addLeft, boolean addRight){
+        addEdge(edge, addLeft, addRight, 1);
+    }
+
+
+    public void draw(Graphics g, GraphicsPanel gp){
+        int[] p1 = gp.mapCoords(getEnd1());
+        int[] p2 = gp.mapCoords(getEnd2());
+        g.setColor(Color.black);
+        g.drawLine(p1[0], p1[1], p2[0], p2[1]);
+    }
+
 
 }

@@ -5,10 +5,11 @@ import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Random;
 
 import core.*;
-import patterns.PentagonAndStar.PSEdge;
 import patterns.PentagonAndStar.Pentagon;
 
 
@@ -119,7 +120,7 @@ public class GraphicsPanel extends JPanel {
 //        bigSquare.makeEdges();
 //        System.out.println("bigSquare: "+bigSquare);
 //        drawFace(bigSquare, g2d, Color.black, false);
-//        bigSquare.split_inside();
+//        bigSquare.split();
 //        Random r = new Random();
 //        for (Face smallSquare : bigSquare.getComponentFaces()){
 //            Color color = Color.getHSBColor(r.nextFloat(), r.nextFloat(), r.nextFloat());
@@ -196,21 +197,26 @@ public class GraphicsPanel extends JPanel {
 
         //____________________one PentagonAndStar.pentagon edge splitting____________________
         Pentagon starPentagon = Pentagon.onCircle(150, new abstractPoint(100, 300), 1*Math.PI/5.0);
-        drawFace(starPentagon, g2d, Color.black, false);
-        ArrayList<Face> pentagonParts = split_iterate(starPentagon, 2);
+        //drawFace(starPentagon, g2d, Color.black, false);
+        ArrayList<Fractal> pentagonParts = split_iterate(starPentagon, 2);
         drawShapes(pentagonParts, g2d);
+        System.out.println("output: "+pentagonParts);
+//        for (Fractal part: pentagonParts){
+//            System.out.println(part);
+//        }
 
-        starPentagon.makeEdges();
-        Edge[] edges = starPentagon.getEdges();
-        //showEdgeAndPointOrder(starPentagon, g2d);
-        System.out.println("total edges = "+edges.length);
-        for (Edge edge : edges){
-            edge.split();
-            //drawShapes(edge.getSplitFaces(), g2d);
-            //showEdgeAndPointOrder(edge.getSplitFaces().get(0), g2d);
-            System.out.println(edge);
-        }
-        showBoundarySplit(starPentagon, g2d);
+
+//        starPentagon.makeEdges();
+//        Edge[] edges = starPentagon.getEdges();
+//        //showEdgeAndPointOrder(starPentagon, g2d);
+//        System.out.println("total edges = "+edges.length);
+//        for (Edge edge : edges){
+//            edge.split();
+//            //drawShapes(edge.getSplitFaces(), g2d);
+//            //showEdgeAndPointOrder(edge.getSplitFaces().get(0), g2d);
+//            System.out.println(edge);
+//        }
+//        showBoundarySplit(starPentagon, g2d);
 
         //____________________two PentagonAndStar.pentagon on same edge____________________
 //        PSEdge mainEdge = new PSEdge(null, null, new abstractPoint(150, 325), new abstractPoint(50, 325));
@@ -266,9 +272,15 @@ public class GraphicsPanel extends JPanel {
         }
     }
 
+    public void drawShapes(ArrayList<Fractal> shapes, Graphics g){
+        for (Fractal shape: shapes){
+            shape.draw(g, this);
+        }
+    }
+
 
     //should this be able to draw points and edges too?
-    public void drawShapes(ArrayList<Face> shapes, Graphics g ){
+    public void drawFaces(ArrayList<Face> shapes, Graphics g ){
         Random r = new Random();
         for (Face face: shapes){
             System.out.println(face);
@@ -338,41 +350,125 @@ public class GraphicsPanel extends JPanel {
         return new_point;
     }
 
-    //iterate dividing the core.Face, until max depth. then draw all the max depth faces
-    //for now, just iterate on Faces, ignore Edges. quartering_square can split on faces only
-    //eventually this should iterate on Faces and Edges
+//    //iterate dividing the core.Face, until max depth. then draw all the max depth faces
+//    //for now, just iterate on Faces, ignore Edges.
+//    public ArrayList<Face> split_iterate(Face startingFace, int maxDepth){
+//        ArrayList<Face> current_faces = new ArrayList<>();
+//        startingFace.setDepth(0);
+//        current_faces.add(startingFace);
+//        ArrayList<Face> final_faces = new ArrayList<>();
+//        //iterate: pop a face from current_faces, split it, put new faces into current_faces
+//        //ends when max depth reached - could put this in core.Face
+//        //when done, draw all the remaining faces and edges
+//        while (! current_faces.isEmpty()){
+//            //removing from index 0 makes breadth-first traversal, since it adds on end.
+//            //or could remove from max index for depth-first - don't really care now
+//            Face nextFace = current_faces.remove(0);
+//            int depth = nextFace.getDepth();
+//            //System.out.println("pop node with depth = "+depth);
+//            if (depth >= maxDepth){
+//                final_faces.add(nextFace);
+//            } else {
+//                nextFace.makeEdges();
+//                nextFace.split_all_edges();
+//                nextFace.split();
+//                for (Face newFace : nextFace.getComponentFaces()){
+//                    //newFace.setDepth(depth+1); //without this line, split needs to set depth.
+//                    current_faces.add(newFace);
+//                }
+//            }
+//        }
+//        return final_faces;
+//    }
 
-    public ArrayList<Face> split_iterate(Face startingFace, int maxDepth){
-        ArrayList<Face> current_faces = new ArrayList<>();
-        startingFace.setDepth(0);
-        current_faces.add(startingFace);
-        ArrayList<Face> final_faces = new ArrayList<>();
-        //iterate: pop a face from current_faces, split it, put new faces into current_faces
-        //ends when max depth reached - could put this in core.Face
-        //when done, draw all the remaining faces and edges
-        while (! current_faces.isEmpty()){
-            //removing from index 0 makes breadth-first traversal, since it adds on end.
-            //or could remove from max index for depth-first - don't really care now
-            Face nextFace = current_faces.remove(0);
-            int depth = nextFace.getDepth();
-            //System.out.println("pop node with depth = "+depth);
-            if (depth >= maxDepth){
-                final_faces.add(nextFace);
-            } else {
-                nextFace.makeEdges();
-                nextFace.split_all_edges();
-                nextFace.split_inside();
-                for (Face newFace : nextFace.getComponentFaces()){
-                    //newFace.setDepth(depth+1); //without this line, split_inside needs to set depth.
-                    current_faces.add(newFace);
+    //version which splits Edge and Face, but using different logic (could also use Fractal interface)
+    //for Face to split, it must have all its adjacent edges split
+    //for Edge to split, it must have adjacent Faces set -> Faces were split down to same level
+    //so instead of arbitrary traversal, it has to be breadth-first
+    //for depth i = 1 to max depth
+    //  split all edges at depth i
+    //  split all faces at depth i
+    public ArrayList<Fractal> split_iterate(ArrayList<Face> startingFaces, ArrayList<Edge> startingEdges, int maxDepth){
+
+        //store pieces at all depths: from 0(initial), 1(split once) .... maxdepth
+        ArrayList<Face>[] allDepthFaces = new ArrayList[maxDepth+1];
+        ArrayList<Edge>[] allDepthEdges = new ArrayList[maxDepth+1];
+        allDepthFaces[0] = startingFaces;
+        allDepthEdges[0] = startingEdges;
+        for (int i=1; i<= maxDepth; i++){
+            allDepthFaces[i] = new ArrayList<>();
+            allDepthEdges[i] = new ArrayList<>();
+        }
+
+        for (Edge edge: startingEdges){
+            edge.setDepth(0);
+            edge.split();
+        }
+
+        for (Face face: startingFaces){
+            face.setDepth(0);
+            face.split();
+        }
+
+        //split all levels less than maxdepth, in low->high order.
+        for (int depth=0; depth < maxDepth; depth++){
+            //split edges at that depth
+            System.out.println("__________ at depth: "+depth+"__________");
+            ArrayList<Edge> CurrentDepthEdges = allDepthEdges[depth];
+            for (int i = 0; i< CurrentDepthEdges.size(); i++){
+                Edge currentEdge = CurrentDepthEdges.get(i);
+                System.out.println("splitting Edge: "+currentEdge);
+                currentEdge.split();
+                HashMap edgeParts = currentEdge.getParts();
+                for (Edge edge_edge : (ArrayList<Edge>) edgeParts.get("Edges")){
+                    System.out.println("add edge-edge: "+edge_edge);
+                    allDepthEdges[edge_edge.getDepth()].add(edge_edge);
+                }
+                for (Face edge_face : (ArrayList<Face>) edgeParts.get("Faces")){
+                    System.out.println("add edge-face: "+edge_face);
+                    allDepthFaces[edge_face.getDepth()].add(edge_face);
+                }
+            }
+            //split faces at that depth
+            ArrayList<Face> CurrentDepthFaces = allDepthFaces[depth];
+            for (int j=0; j<CurrentDepthFaces.size(); j++ ){
+                Face currentFace = CurrentDepthFaces.get(j);
+                System.out.println("splitting Face: "+currentFace);
+                //face.split();
+                HashMap faceParts = currentFace.getParts();
+                for (Edge face_edge : (ArrayList<Edge>) faceParts.get("Edges")){
+                    System.out.println("add face-edge: "+face_edge);
+                    allDepthEdges[face_edge.getDepth()].add(face_edge);
+                }
+                for (Face face_face : (ArrayList<Face>) faceParts.get("Faces")){
+                    System.out.println("add face-face: "+face_face);
+                    System.out.println("depth is: "+face_face.getDepth());
+                    allDepthFaces[face_face.getDepth()].add(face_face);
                 }
             }
         }
-        return final_faces;
+        System.out.println("split_iterate complete");
+        ArrayList<Fractal> finalShapes = new ArrayList<>();
+        finalShapes.addAll(allDepthEdges[maxDepth]);
+        finalShapes.addAll(allDepthFaces[maxDepth]);
+        return finalShapes;
+    }
+
+    public ArrayList<Fractal> split_iterate(Face startingFace, int maxDepth) {
+        ArrayList<Face> startingFaces = new ArrayList<>();
+        startingFaces.add(startingFace);
+
+        ArrayList<Edge> startingEdges = new ArrayList<>();
+        startingFace.makeEdges();
+//        for (Edge edge: startingFace.getEdges()){
+//            startingEdges.add(edge);
+//        }
+        Collections.addAll(startingEdges, startingFace.getEdges());
+        return split_iterate(startingFaces, startingEdges, maxDepth);
     }
 
 
-    //make a regular polygon
+        //make a regular polygon
     //degree - number of vertices
     //radius - radius of circle through the vertices (can I use side length instead?)
     //

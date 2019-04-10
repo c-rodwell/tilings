@@ -43,7 +43,7 @@ public class Golden221 extends Face {
 
     //arbitrarily say we split to a point on edges[1] (could be edges[2] also for 221)
 
-    public void split_inside(){
+    public void split(){
         abstractPoint corner1 = polygon.getPoint(0);
         abstractPoint corner2 = polygon.getPoint(1);
         abstractPoint corner3 = polygon.getPoint(2);

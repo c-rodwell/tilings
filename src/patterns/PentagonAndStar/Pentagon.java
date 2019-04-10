@@ -33,7 +33,7 @@ public class Pentagon extends Face{
     }
 
     //old version which doesn't add edges
-//    public void split_inside() {
+//    public void split() {
 //        //assume split_edge was called on all edges in order - can use component_edges
 //        Edge edge11 = component_edges.get(0);
 //        Edge edge21 = component_edges.get(2);
@@ -49,8 +49,14 @@ public class Pentagon extends Face{
 //        addFace(Pentagon.onCircle(polygon.getRadius()/(Math.pow(phi, 2)), getCenter(), polygon.getAngle()+(Math.PI/5.0)));
 //    }
 
-        public void split_inside() {
-            //assume split_edge was called on all edges in order - can use component_edges
+        public void split() {
+            //assume split_edge was called on all edges in order - can use edgePoints and edgeEdges
+
+            if (wasSplit){
+                return;
+            }
+            wasSplit = true;
+
 
             //central pentagon
             ArrayList<abstractPoint> centerPoints = new ArrayList<>();
@@ -78,11 +84,12 @@ public class Pentagon extends Face{
                 Pentagon cornerPentagon = new Pentagon(new abstractPolygon(vertices));
                 addFace(cornerPentagon);
 
+                cornerPentagon.
             }
 
     }
 
-    public Color getColor(){
-        return Color.orange;
-    }
+//    public Color getColor(){
+//        return Color.orange;
+//    }
 }

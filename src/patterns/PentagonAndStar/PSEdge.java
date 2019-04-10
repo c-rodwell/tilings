@@ -29,8 +29,9 @@ public class PSEdge extends core.Edge {
         abstractPoint leftPoint = bothPoints[1];
 
         //fist part to add is always edge1
-        splitEdgesRight.add(edge1);
-        splitEdgesLeft.add(edge1);
+//        splitEdgesRight.add(edge1);
+//        splitEdgesLeft.add(edge1);
+        addEdge(edge1, true, true);
         splitPointsLeft.add(middlePart.getEnd1());
         splitPointsRight.add(middlePart.getEnd1());
 
@@ -49,25 +50,31 @@ public class PSEdge extends core.Edge {
         if (rightSticksOut && leftSticksOut){
             throw new RuntimeException("Illegal pattern: two non-pentagon shapes touching");
         } else if (rightSticksOut){
-
+            throw new RuntimeException("haven't implemented pentagon to non-pentagon yet");
         } else if (leftSticksOut){
-
+            throw new RuntimeException("haven't implemented pentagon to non-pentagon yet");
         } else {
             Rhombus edgeRhombus = Rhombus.fromLongDiag(rightPoint, leftPoint);
-            splitFaces.add(edgeRhombus);
+            addFace(edgeRhombus);//splitFaces.add(edgeRhombus);
             edgeRhombus.makeEdges();
-            splitEdgesRight.add(edgeRhombus.getEdge(3));
-            splitEdgesRight.add(edgeRhombus.getEdge(0));
 
-            splitEdgesLeft.add(edgeRhombus.getEdge(2));
-            splitEdgesLeft.add(edgeRhombus.getEdge(1));
+            addEdge(edgeRhombus.getEdge(3), false, true);
+            addEdge(edgeRhombus.getEdge(0), false, true);
+            addEdge(edgeRhombus.getEdge(2), true, false);
+            addEdge(edgeRhombus.getEdge(1), true, false);
+
+//            splitEdgesRight.add(edgeRhombus.getEdge(3));
+//            splitEdgesRight.add(edgeRhombus.getEdge(0));
+//            splitEdgesLeft.add(edgeRhombus.getEdge(2));
+//            splitEdgesLeft.add(edgeRhombus.getEdge(1));
 
             splitPointsLeft.add(leftPoint);
             splitPointsRight.add(rightPoint);
         }
 
-        splitEdgesRight.add(edge2);
-        splitEdgesLeft.add(edge2);
+        addEdge(edge2, true, true);
+        //splitEdgesRight.add(edge2);
+        //splitEdgesLeft.add(edge2);
         splitPointsLeft.add(middlePart.getEnd2());
         splitPointsRight.add(middlePart.getEnd2());
         giveSplitsToFaces();

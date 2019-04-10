@@ -42,7 +42,7 @@ public class Golden113 extends Face {
 
     //113 triangle splits to a point on the base
 
-    public void split_inside(){
+    public void split(){
         abstractPoint corner1 = polygon.getPoint(0);
         abstractPoint corner2 = polygon.getPoint(1);
         abstractPoint corner3 = polygon.getPoint(2);

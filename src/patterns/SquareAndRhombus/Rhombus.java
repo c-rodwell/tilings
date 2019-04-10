@@ -29,7 +29,7 @@ public class Rhombus extends Face {
         addFace(edgeSquare);
     }
 
-    public void split_inside(){
+    public void split(){
         //placeholder - return itself as the only part
         //abstractPoint num
 
